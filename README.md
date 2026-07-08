@@ -27,7 +27,7 @@ A full-stack web app for college students (VIT Pune, `@vit.edu`) to buy/sell ite
 
 ### Lost & Found
 
-![Lost and Found](screenshots/lostandfound.png)
+![Lost and Found](screenshots/lost.png)
 
 ### Hostel
 
