@@ -193,5 +193,20 @@
     "profilePic": "",
     "contributions": 0,
     "wishlist": []
+  },
+  {
+    "_id": "wn2ygtz0l",
+    "createdAt": "2026-07-08T14:49:39.589Z",
+    "updatedAt": "2026-07-08T14:49:39.589Z",
+    "name": "Ganesh Parimi",
+    "email": "ganesh.1251090424@vit.edu",
+    "password": "$2a$10$O2Hba95qsV/uraBAyAweYuUWfSVCHpg3nLtn81zLhTAtwbSyIX39.",
+    "branch": "",
+    "year": "2nd Year",
+    "status": "Day Scholar",
+    "contact": "",
+    "profilePic": "",
+    "contributions": 0,
+    "wishlist": []
   }
 ]
