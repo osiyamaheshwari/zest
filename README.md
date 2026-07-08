@@ -27,11 +27,11 @@ A full-stack web app for college students (VIT Pune, `@vit.edu`) to buy/sell ite
 
 ### Lost & Found
 
-![Lost and Found](screenshots/lost.png)
+![Lost and Found](screenshots/lost.jpeg)
 
 ### Hostel
 
-![Hostel](screenshots/hostel.png)
+![Hostel](screenshots/hostel.jpeg)
 ## Features
 
 - **Auth** — register/login restricted to `@vit.edu` emails, JWT sessions, profile edit.
