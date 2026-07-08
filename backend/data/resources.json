@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "bih13lcoe",
+    "createdAt": "2026-06-19T11:26:18.638Z",
+    "updatedAt": "2026-06-19T11:26:32.827Z",
+    "contributor": "hjye940kv",
+    "contributorName": "Om Thopte",
+    "title": "dwq",
+    "description": "aswdw",
+    "department": "Computer",
+    "year": "1st Year",
+    "semester": "Semester 1",
+    "subject": "wdwdq",
+    "filePath": "/uploads/1781868378622-794886161.pdf",
+    "downloads": 0,
+    "ratings": [
+      {
+        "userId": "hjye940kv",
+        "rating": 2
+      }
+    ],
+    "avgRating": 2,
+    "reviews": [
+      {
+        "userId": "hjye940kv",
+        "userName": "Om Thopte",
+        "text": "asd",
+        "date": "2026-06-19T11:26:32.825Z"
+      }
+    ]
+  }
+]

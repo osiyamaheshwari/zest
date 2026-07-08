@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2'%3E%3Cpath d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.2C19 18 15 20 11 20z'/%3E%3Cpath d='M19 2c-2.26 4.33-5.27 7.14-8 10'/%3E%3C/svg%3E" />
+  <title>ZEST | Campus Utility & Resource Platform (Vit Pune)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eefef4',
+              100: '#dcfce8',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e', // Emerald Green ZEST logo color
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              950: '#052e16',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Stylesheets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;850;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .dark .glass {
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    /* Hide scrollbar utility */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+
+  <!-- React & Babel CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100">
+
+  <div id="root"></div>
+
+  <!-- React JSX Application Code -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // ========================================================
+    // 1. INLINE SVG ICON HELPER (Replaces Lucide-react for offline CDN robustness)
+    // ========================================================
+    function Icon({ name, className = "h-5 w-5" }) {
+      const paths = {
+        leaf: <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.2C19 18 15 20 11 20z M19 2c-2.26 4.33-5.27 7.14-8 10" />,
+        sun: <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0 M12 2v2 M12 20v2 M4.93 4.93l1.41 1.41 M17.66 17.66l1.41 1.41 M2 12h2 M20 12h2 M6.34 17.66l-1.41 1.41 M19.07 4.93l-1.41 1.41" />,
+        moon: <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />,
+        search: <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0 M21 21l-6-6" />,
+        filter: <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-4 2v-9l-4.414-4.414a2 2 0 0 1 -.586-1.414z" />,
+        plus: <path d="M12 5v14 M5 12h14" />,
+        "map-pin": <path d="M9 11a3 3 0 1 0 6 0a3 3 0 1 0 -6 0 M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />,
+        calendar: <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z M16 3v4 M8 3v4 M4 11h16" />,
+        message: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+        check: <path d="M5 12l5 5L20 7" />,
+        shopping: <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0" />,
+        home: <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10" />,
+        book: <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />,
+        help: <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M12 16h.01 M12 7a2 2 0 0 1 2 2c0 .93-.726 1.746-1.576 2.05A2 2 0 0 0 11 13" />,
+        user: <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />,
+        logout: <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9" />,
+        bell: <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0" />,
+        download: <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3" />,
+        star: <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />,
+        chevron: <path d="M9 18l6-6-6-6" />,
+        trash: <path d="M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />,
+        award: <path d="M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />,
+        heart: <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />,
+        x: <path d="M18 6L6 18 M6 6l12 12" />
+      };
+
+      return (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className={className}
+        >
+          {paths[name] || <circle cx="12" cy="12" r="10" />}
+        </svg>
+      );
+    }
+
+    // ========================================================
+    // 2. MOCK DATABASE (LOCAL STORAGE WRAPPER)
+    // ========================================================
+    const initialUsers = [
+      { id: "u1", name: "Rahul Deshmukh", email: "rahul.d@vit.edu", password: "123", branch: "Computer Science", year: "3rd Year", status: "Hostel", contact: "+91 98765 43210", profilePic: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80", contributions: 5, wishlist: ["h1"] },
+      { id: "u2", name: "Anjali Kulkarni", email: "anjali.k@vit.edu", password: "123", branch: "IT", year: "2nd Year", status: "Day Scholar", contact: "+91 94234 56789", profilePic: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80", contributions: 8, wishlist: [] }
+    ];
+
+    const initialMarketplace = [
+      { _id: "m1", seller: "u1", sellerName: "Rahul Deshmukh", sellerContact: "+91 98765 43210", title: "Hercules Gear Cycle (21 Speed)", description: "Excellent condition gear cycle, brand new tires. Selling since I am moving out of the hostel.", category: "Cycles", price: 3500, image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=400&q=80", status: "Interested", interestedBuyers: [] },
+      { _id: "m2", seller: "u2", sellerName: "Anjali Kulkarni", sellerContact: "+91 94234 56789", title: "Casio Scientific Calculator fx-991EX", description: "Hardly used, perfect for engineering maths and calculations.", category: "Electronics", price: 800, image: "https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=400&q=80", status: "Interested", interestedBuyers: [] },
+      { _id: "m3", seller: "u1", sellerName: "Rahul Deshmukh", sellerContact: "+91 98765 43210", title: "Engineering Drawing Board with T-Square", description: "Full size drawing board. Essential for first year students.", category: "Furniture", price: 600, image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=400&q=80", status: "Negotiating", interestedBuyers: [] }
+    ];
+
+    const initialAccommodations = [
+      { _id: "h1", owner: "u1", ownerName: "Rahul Deshmukh", ownerContact: "+91 98765 43210", title: "Spacious Double Sharing Room near VIT Gate 2", description: "Looking for one cooperative roommate. Flat has high-speed Wi-Fi, washing machine, and maid service.", type: "Flat", rent: 5500, location: "Kondhwa Lane 4", occupancy: "Double", genderPreference: "Male", amenities: ["Wi-Fi", "Washing Machine", "Geyser", "Food Included"], distance: 0.5, images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=500&q=80"], roommateProfile: { needed: true, details: "Must be clean, non-smoker, and respect study hours." } },
+      { _id: "h2", owner: "u2", ownerName: "Anjali Kulkarni", ownerContact: "+91 94234 56789", title: "Girls PG Accommodation (Single Occupancy)", description: "Fully furnished PG with AC, laundry, and meals. 24/7 security.", type: "PG", rent: 8500, location: "Katraj Chowk", occupancy: "Single", genderPreference: "Female", amenities: ["AC", "Wi-Fi", "Laundry", "24/7 Security"], distance: 1.2, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=500&q=80"], roommateProfile: { needed: false, details: "" } }
+    ];
+
+    const initialResources = [
+      { _id: "r1", contributor: "u2", contributorName: "Anjali Kulkarni", title: "Data Structures & Algorithms Unit 2 (Trees & Graphs)", description: "Detailed handwritten notes containing algorithm trace diagrams and complexity analysis.", department: "Computer", year: "2nd Year", semester: "Semester 3", subject: "DSA", filePath: "DSA_Unit2_Trees_Graphs.pdf", downloads: 45, ratings: [{ userId: "u1", rating: 5 }], avgRating: 5.0, reviews: [{ userId: "u1", userName: "Rahul Deshmukh", text: "Brilliant notes! The tree traversal diagrams helped me clear my in-sems easily.", date: "2026-06-12T10:00:00.000Z" }] },
+      { _id: "r2", contributor: "u1", contributorName: "Rahul Deshmukh", title: "Thermodynamics Previous Year Question Papers (2022-2024)", description: "Compiled End-sem question papers with step-by-step solved numeric problems.", department: "Mechanical", year: "2nd Year", semester: "Semester 4", subject: "Thermodynamics", filePath: "Thermo_PYQ_Solved.pdf", downloads: 88, ratings: [], avgRating: 0.0, reviews: [] }
+    ];
+
+    const initialLostFound = [
+      { _id: "lf1", reporter: "u2", reporterName: "Anjali Kulkarni", reporterContact: "+91 94234 56789", title: "Noise ColorFit Smartwatch", description: "Found a black smart watch on the table in the central library near the window.", image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80", type: "Found", location: "Central Library Desk 42", date: "2026-06-13", status: "Found", claimRequests: [] },
+      { _id: "lf2", reporter: "u1", reporterName: "Rahul Deshmukh", reporterContact: "+91 98765 43210", title: "Keys with Leather Keychain", description: "Lost a bunch of three keys with a dark brown leather keytag somewhere near the canteen area.", image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=400&q=80", type: "Lost", location: "Canteen / Block A Passage", date: "2026-06-14", status: "Lost", claimRequests: [] }
+    ];
+
+    const setupDatabase = () => {
+      if (!localStorage.getItem("zest_users")) localStorage.setItem("zest_users", JSON.stringify(initialUsers));
+      if (!localStorage.getItem("zest_marketplace")) localStorage.setItem("zest_marketplace", JSON.stringify(initialMarketplace));
+      if (!localStorage.getItem("zest_accommodations")) localStorage.setItem("zest_accommodations", JSON.stringify(initialAccommodations));
+      if (!localStorage.getItem("zest_resources")) localStorage.setItem("zest_resources", JSON.stringify(initialResources));
+      if (!localStorage.getItem("zest_lostfound")) localStorage.setItem("zest_lostfound", JSON.stringify(initialLostFound));
+    };
+
+    setupDatabase();
+
+    // ========================================================
+    // 3. MAIN APPLICATION CONTAINER
+    // ========================================================
+    function App() {
+      const [page, setPage] = useState('landing');
+      const [darkMode, setDarkMode] = useState(false);
+      const [currentUser, setCurrentUser] = useState(null);
+      const [notifications, setNotifications] = useState([
+        { id: 1, text: "Welcome to ZEST! Browse our new notes repository.", time: "1 hour ago", read: false },
+        { id: 2, text: "Someone is interested in your 'Hercules Gear Cycle' listing.", time: "2 hours ago", read: false },
+        { id: 3, text: "New PG accommodation listed 1.2 km from campus.", time: "1 day ago", read: true }
+      ]);
+      const [showNotifMenu, setShowNotifMenu] = useState(false);
+
+      // Database lists synced with localStorage
+      const [users, setUsers] = useState(JSON.parse(localStorage.getItem("zest_users")));
+      const [marketplace, setMarketplace] = useState(JSON.parse(localStorage.getItem("zest_marketplace")));
+      const [accommodations, setAccommodations] = useState(JSON.parse(localStorage.getItem("zest_accommodations")));
+      const [resources, setResources] = useState(JSON.parse(localStorage.getItem("zest_resources")));
+      const [lostfound, setLostfound] = useState(JSON.parse(localStorage.getItem("zest_lostfound")));
+
+      useEffect(() => {
+        if (darkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }, [darkMode]);
+
+      // Check current session
+      useEffect(() => {
+        const loggedUser = localStorage.getItem("zest_current_user");
+        if (loggedUser) {
+          setCurrentUser(JSON.parse(loggedUser));
+          setPage('dashboard');
+        }
+      }, []);
+
+      const updateStoredUser = (updated) => {
+        setCurrentUser(updated);
+        localStorage.setItem("zest_current_user", JSON.stringify(updated));
+        
+        // Update in global users list
+        const updatedUsersList = users.map(u => u.id === updated.id ? updated : u);
+        setUsers(updatedUsersList);
+        localStorage.setItem("zest_users", JSON.stringify(updatedUsersList));
+      };
+
+      const handleLogout = () => {
+        localStorage.removeItem("zest_current_user");
+        setCurrentUser(null);
+        setPage('landing');
+      };
+
+      return (
+        <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans transition-colors duration-200 flex flex-col justify-between">
+          <div>
+            {/* Header / Navbar */}
+            <nav className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
+              <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => setPage(currentUser ? 'dashboard' : 'landing')}>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-md shadow-emerald-500/20">
+                    <Icon name="leaf" className="h-6 w-6" />
+                  </div>
+                  <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-emerald-400 bg-clip-text text-transparent">ZEST</span>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  {/* Theme Toggle */}
+                  <button 
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    <Icon name={darkMode ? "sun" : "moon"} className="h-5 w-5" />
+                  </button>
+
+                  {currentUser && (
+                    <>
+                      {/* Notification Bell */}
+                      <div className="relative">
+                        <button 
+                          onClick={() => setShowNotifMenu(!showNotifMenu)}
+                          className="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+                        >
+                          <Icon name="bell" className="h-5 w-5" />
+                          {notifications.some(n => !n.read) && (
+                            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500"></span>
+                          )}
+                        </button>
+
+                        {showNotifMenu && (
+                          <div className="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-slate-900 z-50">
+                            <div className="flex items-center justify-between border-b border-slate-100 pb-2 px-2 dark:border-slate-800">
+                              <span className="font-semibold text-sm">Notifications</span>
+                              <button 
+                                onClick={() => setNotifications(notifications.map(n => ({ ...n, read: true })))}
+                                className="text-xs text-emerald-600 hover:underline dark:text-emerald-400"
+                              >
+                                Mark all read
+                              </button>
+                            </div>
+                            <div className="mt-2 space-y-1 max-h-60 overflow-y-auto">
+                              {notifications.map(n => (
+                                <div 
+                                  key={n.id} 
+                                  className={`rounded-lg p-2 text-xs transition-colors ${n.read ? 'text-slate-500 dark:text-slate-400' : 'bg-slate-50 dark:bg-slate-800/50 font-medium'}`}
+                                >
+                                  <p>{n.text}</p>
+                                  <span className="text-[10px] text-slate-400">{n.time}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Profile Link */}
+                      <button 
+                        onClick={() => setPage('profile')}
+                        className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      >
+                        <div className="h-8 w-8 overflow-hidden rounded-full border border-emerald-500">
+                          <img 
+                            src={currentUser.profilePic || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80"} 
+                            alt="Profile" 
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <span className="hidden text-sm font-medium sm:block">{currentUser.name}</span>
+                      </button>
+
+                      <button 
+                        onClick={handleLogout}
+                        className="rounded-lg p-2 text-slate-500 hover:bg-red-550/10 hover:text-red-500 dark:text-slate-400 dark:hover:bg-red-950/30 transition-colors"
+                        title="Logout"
+                      >
+                        <Icon name="logout" className="h-5 w-5" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </nav>
+
+            {/* Main Content */}
+            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+              {page === 'landing' && <LandingPage setUsers={setUsers} users={users} setCurrentUser={setCurrentUser} setPage={setPage} />}
+              {page === 'dashboard' && <Dashboard setPage={setPage} currentUser={currentUser} />}
+              {page === 'marketplace' && <Marketplace marketplace={marketplace} setMarketplace={setMarketplace} currentUser={currentUser} />}
+              {page === 'hostels' && <HostelFinder accommodations={accommodations} setAccommodations={setAccommodations} currentUser={currentUser} updateStoredUser={updateStoredUser} />}
+              {page === 'resources' && <Resources resources={resources} setResources={setResources} currentUser={currentUser} updateStoredUser={updateStoredUser} users={users} />}
+              {page === 'lostfound' && <LostFound lostfound={lostfound} setLostfound={setLostfound} currentUser={currentUser} />}
+              {page === 'profile' && <Profile currentUser={currentUser} updateStoredUser={updateStoredUser} />}
+            </main>
+          </div>
+
+          {/* Footer */}
+          <footer className="border-t border-slate-200 bg-white py-8 dark:border-slate-800 dark:bg-slate-900 transition-colors">
+            <div className="mx-auto max-w-7xl px-4 text-center text-sm text-slate-500 dark:text-slate-400">
+              <p>© 2026 ZEST Student Platform. Built exclusively for VIT Pune Students (@vit.edu).</p>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    // ========================================================
+    // A. LANDING / AUTHENTICATION PAGE
+    // ========================================================
+    function LandingPage({ setUsers, users, setCurrentUser, setPage }) {
+      const [isLogin, setIsLogin] = useState(true);
+      const [formData, setFormData] = useState({ name: '', email: '', password: '', branch: '', year: '', status: 'Day Scholar', contact: '', profilePic: '' });
+      const [error, setError] = useState('');
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setError('');
+
+        // Email domain verification
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@vit\.edu$/;
+        if (!emailRegex.test(formData.email)) {
+          setError('Restricted access! You must sign up with a valid @vit.edu email address.');
+          return;
+        }
+
+        if (isLogin) {
+          // Find user
+          const user = users.find(u => u.email === formData.email && u.password === formData.password);
+          if (!user) {
+            setError('Invalid credentials or student record not registered.');
+            return;
+          }
+          setCurrentUser(user);
+          localStorage.setItem("zest_current_user", JSON.stringify(user));
+          setPage('dashboard');
+        } else {
+          // Register
+          if (!formData.name) {
+            setError('Full Name is required.');
+            return;
+          }
+          if (users.some(u => u.email === formData.email)) {
+            setError('User with this email already exists.');
+            return;
+          }
+
+          const newUser = {
+            id: 'u' + (users.length + 1),
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            branch: formData.branch || 'General Engineering',
+            year: formData.year || '1st Year',
+            status: formData.status || 'Day Scholar',
+            contact: formData.contact || '',
+            profilePic: formData.profilePic || '',
+            contributions: 0,
+            wishlist: []
+          };
+
+          const updatedUsers = [...users, newUser];
+          setUsers(updatedUsers);
+          localStorage.setItem("zest_users", JSON.stringify(updatedUsers));
+          
+          setCurrentUser(newUser);
+          localStorage.setItem("zest_current_user", JSON.stringify(newUser));
+          setPage('dashboard');
+        }
+      };
+
+      return (
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+          {/* Tagline branding */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+              <Icon name="leaf" className="h-4 w-4" /> Campus Resource Network
+            </div>
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">
+              A One-Stop Student <span className="bg-gradient-to-r from-emerald-600 to-emerald-400 bg-clip-text text-transparent">Utility Platform</span> for Campus Resource Management
+            </h1>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl">
+              Exclusively built for VIT college students. Securely buy/sell products, request flats/roommates, preview semester notes, and track lost or found items.
+            </p>
+
+            <div className="grid grid-cols-3 gap-6 border-t border-slate-200 pt-8 dark:border-slate-800">
+              <div>
+                <div className="text-3xl font-extrabold text-emerald-500">1,200+</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">Active Students</div>
+              </div>
+              <div>
+                <div className="text-3xl font-extrabold text-emerald-500">450+</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">Notes Contributed</div>
+              </div>
+              <div>
+                <div className="text-3xl font-extrabold text-emerald-500">₹80K+</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">Transactions Completed</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Portal form */}
+          <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl shadow-xl dark:border-slate-800 dark:bg-slate-900 overflow-hidden">
+            <div className="flex border-b border-slate-100 dark:border-slate-800">
+              <button 
+                onClick={() => { setIsLogin(true); setError(''); }}
+                className={`flex-1 py-4 text-center font-semibold text-sm transition-colors ${isLogin ? 'border-b-2 border-emerald-500 text-slate-900 dark:text-white' : 'text-slate-400'}`}
+              >
+                Log In
+              </button>
+              <button 
+                onClick={() => { setIsLogin(false); setError(''); }}
+                className={`flex-1 py-4 text-center font-semibold text-sm transition-colors ${!isLogin ? 'border-b-2 border-emerald-500 text-slate-900 dark:text-white' : 'text-slate-400'}`}
+              >
+                Sign Up
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {error && (
+                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-955/20 dark:text-red-400 border border-red-200 dark:border-red-900">
+                  {error}
+                </div>
+              )}
+
+              {!isLogin && (
+                <>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 uppercase tracking-wider text-slate-500">Full Name</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. John Doe"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 uppercase tracking-wider text-slate-500">Branch</label>
+                      <input 
+                        type="text" placeholder="CS / IT / Mechanical"
+                        value={formData.branch}
+                        onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 uppercase tracking-wider text-slate-500">Year</label>
+                      <select 
+                        value={formData.year}
+                        onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      >
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 uppercase tracking-wider text-slate-500">Status</label>
+                      <select 
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      >
+                        <option value="Hostel">Hostel Scholar</option>
+                        <option value="Day Scholar">Day Scholar</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 uppercase tracking-wider text-slate-500">Phone / WhatsApp</label>
+                      <input 
+                        type="text" placeholder="+91 XXXXX XXXXX"
+                        value={formData.contact}
+                        onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold mb-1 uppercase tracking-wider text-slate-500">VIT Email address</label>
+                <input 
+                  type="email" required
+                  placeholder="name.surname@vit.edu"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold mb-1 uppercase tracking-wider text-slate-500">Password</label>
+                <input 
+                  type="password" required
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors"
+              >
+                {isLogin ? 'Log In' : 'Sign Up'}
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // ========================================================
+    // B. CENTRALIZED DASHBOARD
+    // ========================================================
+    function Dashboard({ setPage, currentUser }) {
+      const modules = [
+        { title: "Marketplace", desc: "Campus marketplace for books, calculators, and bicycles.", icon: "shopping", page: "marketplace", color: "from-blue-500 to-indigo-500" },
+        { title: "Hostel & Roommates", desc: "Find hostel vacancies or roommate profiles around campus.", icon: "home", page: "hostels", color: "from-rose-500 to-orange-500" },
+        { title: "PYQs & Study Repo", desc: "Handwritten notes, assignments, and exam test repositories.", icon: "book", page: "resources", color: "from-emerald-500 to-teal-500" },
+        { title: "Lost & Found Portal", desc: "Instantly report lost belongings or review claimed items.", icon: "help", page: "lostfound", color: "from-purple-500 to-pink-500" }
+      ];
+
+      return (
+        <div className="space-y-8">
+          {/* Welcome Banner */}
+          <div className="rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 p-6 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold sm:text-3xl">Welcome to ZEST, {currentUser?.name}!</h2>
+              <p className="text-emerald-100 text-sm max-w-md">Your student profile ({currentUser?.branch || 'General Dept'}) is successfully authenticated.</p>
+            </div>
+            <div className="mt-4 md:mt-0 bg-white/20 border border-white/20 rounded-xl px-4 py-2 text-xs">
+              🎓 Status: <span className="font-bold">{currentUser?.status}</span>
+            </div>
+          </div>
+
+          {/* Module Links */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {modules.map((m, idx) => (
+              <div 
+                key={idx}
+                onClick={() => setPage(m.page)}
+                className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+              >
+                <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${m.color} text-white shadow-md`}>
+                  <Icon name={m.icon} className="h-6 w-6" />
+                </div>
+                <h3 className="mt-4 font-bold text-lg group-hover:text-emerald-500 transition-colors">{m.title}</h3>
+                <p className="mt-2 text-slate-500 dark:text-slate-400 text-xs leading-relaxed">{m.desc}</p>
+                <div className="mt-4 flex items-center text-xs font-semibold text-emerald-500">
+                  Access Portal <Icon name="chevron" className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Side Panels */}
+          <div className="grid gap-6 lg:grid-cols-12">
+            <div className="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <h3 className="font-bold text-lg mb-4">Your Platform Metrics</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2 dark:border-slate-850">
+                  <span className="text-sm text-slate-500">Resource Contributions</span>
+                  <span className="font-bold text-emerald-500">{currentUser?.contributions || 0} uploads</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2 dark:border-slate-850">
+                  <span className="text-sm text-slate-500">Saved Wishlists</span>
+                  <span className="font-bold">{currentUser?.wishlist?.length || 0} items</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">Active Campus Deals</span>
+                  <span className="font-bold text-emerald-500 text-sm">3 Deals pending</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <h3 className="font-bold text-lg mb-4">Recent Campus Activities</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 text-xs leading-relaxed">
+                  <div className="h-2 w-2 mt-1.5 rounded-full bg-emerald-500 shrink-0"></div>
+                  <div>
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">Rahul D.</span> listed <b>Hercules Gear Cycle</b> in Cycles for ₹3,500.
+                    <span className="block text-[10px] text-slate-400 mt-0.5">15 mins ago</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 text-xs leading-relaxed">
+                  <div className="h-2 w-2 mt-1.5 rounded-full bg-blue-500 shrink-0"></div>
+                  <div>
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">Anjali K.</span> uploaded <b>DSA Notes - Unit 2 Trees & Graphs</b>.
+                    <span className="block text-[10px] text-slate-400 mt-0.5">1 hour ago</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 text-xs leading-relaxed">
+                  <div className="h-2 w-2 mt-1.5 rounded-full bg-purple-500 shrink-0"></div>
+                  <div>
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">Sumit J.</span> reported a <b>Lost College ID Card</b> in Canteen Area.
+                    <span className="block text-[10px] text-slate-400 mt-0.5">3 hours ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ========================================================
+    // C. MARKETPLACE MODULE (OLX MOCKUP)
+    // ========================================================
+    function Marketplace({ marketplace, setMarketplace, currentUser }) {
+      const [showAddForm, setShowAddForm] = useState(false);
+      const [selectedItem, setSelectedItem] = useState(null);
+      const [newItem, setNewItem] = useState({ title: '', description: '', category: 'Electronics', price: '', image: '' });
+      const [filters, setFilters] = useState({ category: '', search: '' });
+
+      const handleCreate = (e) => {
+        e.preventDefault();
+        if (!newItem.title || !newItem.price) return;
+
+        const listing = {
+          _id: 'm' + (marketplace.length + 1),
+          seller: currentUser.id,
+          sellerName: currentUser.name,
+          sellerContact: currentUser.contact || currentUser.email,
+          title: newItem.title,
+          description: newItem.description,
+          category: newItem.category,
+          price: Number(newItem.price),
+          image: newItem.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80',
+          status: 'Interested',
+          interestedBuyers: []
+        };
+
+        const updated = [listing, ...marketplace];
+        setMarketplace(updated);
+        localStorage.setItem("zest_marketplace", JSON.stringify(updated));
+        setShowAddForm(false);
+        setNewItem({ title: '', description: '', category: 'Electronics', price: '', image: '' });
+      };
+
+      const expressInterest = (itemId) => {
+        const updated = marketplace.map(item => {
+          if (item._id === itemId) {
+            const buyers = item.interestedBuyers || [];
+            if (!buyers.includes(currentUser.id)) {
+              buyers.push(currentUser.id);
+            }
+            return {
+              ...item,
+              interestedBuyers: buyers,
+              status: item.status === 'Interested' ? 'Contacted Seller' : item.status
+            };
+          }
+          return item;
+        });
+
+        setMarketplace(updated);
+        localStorage.setItem("zest_marketplace", JSON.stringify(updated));
+
+        const target = updated.find(i => i._id === itemId);
+        alert(`Interest Expressed! Seller contact details: ${target.sellerContact}`);
+        setSelectedItem(target);
+      };
+
+      const updateDealStatus = (itemId, newStatus) => {
+        const updated = marketplace.map(item => {
+          if (item._id === itemId) {
+            return { ...item, status: newStatus };
+          }
+          return item;
+        });
+        setMarketplace(updated);
+        localStorage.setItem("zest_marketplace", JSON.stringify(updated));
+        setSelectedItem(updated.find(i => i._id === itemId));
+      };
+
+      const deleteListing = (itemId) => {
+        const updated = marketplace.filter(item => item._id !== itemId);
+        setMarketplace(updated);
+        localStorage.setItem("zest_marketplace", JSON.stringify(updated));
+        setSelectedItem(null);
+      };
+
+      const filteredItems = marketplace.filter(item => {
+        const matchesCategory = !filters.category || item.category === filters.category;
+        const matchesSearch = !filters.search || item.title.toLowerCase().includes(filters.search.toLowerCase()) || item.description.toLowerCase().includes(filters.search.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      return (
+        <div className="space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Student Marketplace</h2>
+              <p className="text-slate-500 text-sm">Browse second-hand cycles, textbooks, and campus essentials.</p>
+            </div>
+            <button 
+              onClick={() => setShowAddForm(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors self-start shadow-md"
+            >
+              <Icon name="plus" className="h-4 w-4" /> Post Product
+            </button>
+          </div>
+
+          {/* Search/Filter Bar */}
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="relative flex-1">
+              <Icon name="search" className="absolute top-3 left-3 h-4 w-4 text-slate-400" />
+              <input 
+                type="text"
+                placeholder="Search products..."
+                value={filters.search}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm dark:border-slate-800 dark:bg-slate-900 focus:border-emerald-500 outline-none"
+              />
+            </div>
+            <select 
+              value={filters.category}
+              onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+              className="rounded-lg border border-slate-200 bg-white p-2.5 text-sm dark:border-slate-800 dark:bg-slate-900 outline-none"
+            >
+              <option value="">All Categories</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Books">Books</option>
+              <option value="Cycles">Cycles</option>
+              <option value="Furniture">Furniture</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+          </div>
+
+          {/* Listings Grid */}
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {filteredItems.map(item => (
+              <div 
+                key={item._id}
+                onClick={() => setSelectedItem(item)}
+                className="group flex flex-col cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-slate-800 dark:bg-slate-900"
+              >
+                <div className="h-44 w-full bg-slate-100 overflow-hidden dark:bg-slate-800">
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-500">{item.category}</span>
+                    <h3 className="font-bold text-slate-850 dark:text-white mt-1 group-hover:text-emerald-500 transition-colors text-sm">{item.title}</h3>
+                    <span className="inline-block mt-2 rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-650 dark:bg-slate-800 dark:text-slate-350">{item.status}</span>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-800">
+                    <span className="font-extrabold text-sm">₹{item.price}</span>
+                    <span className="text-[10px] text-slate-400">By {item.sellerName}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Post item modal */}
+          {showAddForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-lg">Create Marketplace Listing</h3>
+                  <button onClick={() => setShowAddForm(false)} className="text-slate-400 hover:text-slate-600"><Icon name="x" className="h-5 w-5" /></button>
+                </div>
+                <form onSubmit={handleCreate} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Item Name</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. Scientific Calculator"
+                      value={newItem.title}
+                      onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Category</label>
+                      <select 
+                        value={newItem.category}
+                        onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                      >
+                        <option value="Electronics">Electronics</option>
+                        <option value="Books">Books</option>
+                        <option value="Cycles">Cycles</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Accessories">Accessories</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Expected Price (₹)</label>
+                      <input 
+                        type="number" required
+                        placeholder="₹ Price"
+                        value={newItem.price}
+                        onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Image URL (Optional)</label>
+                    <input 
+                      type="text"
+                      placeholder="https://example.com/product.jpg"
+                      value={newItem.image}
+                      onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Description</label>
+                    <textarea 
+                      rows="3"
+                      placeholder="Mention conditions, usage duration, or meet points..."
+                      value={newItem.description}
+                      onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors"
+                  >
+                    Publish Listing
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Details Modal */}
+          {selectedItem && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+                <div className="h-56 bg-slate-100 relative dark:bg-slate-800">
+                  <img 
+                    src={selectedItem.image} 
+                    alt={selectedItem.title} 
+                    className="h-full w-full object-cover"
+                  />
+                  <button 
+                    onClick={() => setSelectedItem(null)} 
+                    className="absolute top-4 right-4 bg-black/40 text-white rounded-full p-1.5 hover:bg-black/60 transition-colors"
+                  >
+                    <Icon name="x" className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="p-6 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-xs font-semibold text-emerald-500 uppercase">{selectedItem.category}</span>
+                      <h3 className="text-xl font-bold mt-1">{selectedItem.title}</h3>
+                    </div>
+                    {selectedItem.seller === currentUser.id && (
+                      <button 
+                        onClick={() => deleteListing(selectedItem._id)} 
+                        className="text-red-500 hover:text-red-600 p-1.5 rounded-lg border border-red-200 hover:bg-red-50 dark:border-red-950 dark:hover:bg-red-950/20"
+                        title="Delete listing"
+                      >
+                        <Icon name="trash" className="h-4.5 w-4.5" />
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-2xl font-extrabold text-emerald-500">₹{selectedItem.price}</p>
+
+                  <div>
+                    <h4 className="text-xs uppercase font-semibold text-slate-400">Description</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-350 mt-1 leading-relaxed">{selectedItem.description || 'No description provided.'}</p>
+                  </div>
+
+                  <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 text-xs border border-slate-100 dark:border-slate-800">
+                    <div>
+                      <span className="block text-slate-400">Seller Student</span>
+                      <span className="font-bold">{selectedItem.sellerName}</span>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400">Deal Tracker Status</span>
+                      <span className="font-bold text-emerald-500">{selectedItem.status}</span>
+                    </div>
+                  </div>
+
+                  {selectedItem.seller === currentUser.id ? (
+                    <div className="space-y-2">
+                      <span className="block text-xs uppercase font-semibold text-slate-400">Update Deal status (Seller Panel)</span>
+                      <div className="flex flex-wrap gap-2">
+                        {['Interested', 'Contacted Seller', 'Meeting Scheduled', 'Negotiating', 'Deal Completed', 'Not Interested'].map(st => (
+                          <button 
+                            key={st}
+                            onClick={() => updateDealStatus(selectedItem._id, st)}
+                            className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-colors ${selectedItem.status === st ? 'bg-emerald-500 text-white border-emerald-500' : 'hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'}`}
+                          >
+                            {st}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => expressInterest(selectedItem._id)}
+                      className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors flex items-center justify-center gap-1.5"
+                    >
+                      <Icon name="message" className="h-5 w-5" /> Express Interest / Get Seller Contact
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ========================================================
+    // D. HOSTEL & ROOMMATE FINDER (AIRBNB MOCKUP)
+    // ========================================================
+    function HostelFinder({ accommodations, setAccommodations, currentUser, updateStoredUser }) {
+      const [showForm, setShowForm] = useState(false);
+      const [selectedList, setSelectedList] = useState(null);
+      const [filters, setFilters] = useState({ type: '', maxRent: '', roommateNeeded: false, search: '' });
+      const [newListing, setNewListing] = useState({ title: '', description: '', type: 'Hostel Room', rent: '', location: '', occupancy: 'Single', genderPreference: 'Any', amenities: '', distance: '', image: '', roommateNeeded: false, roommateDetails: '' });
+
+      const handleCreate = (e) => {
+        e.preventDefault();
+        if (!newListing.title || !newListing.rent || !newListing.location) return;
+
+        const amenitiesArr = newListing.amenities.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+        const listing = {
+          _id: 'h' + (accommodations.length + 1),
+          owner: currentUser.id,
+          ownerName: currentUser.name,
+          ownerContact: currentUser.contact || currentUser.email,
+          title: newListing.title,
+          description: newListing.description,
+          type: newListing.type,
+          rent: Number(newListing.rent),
+          location: newListing.location,
+          occupancy: newListing.occupancy,
+          genderPreference: newListing.genderPreference,
+          amenities: amenitiesArr.length ? amenitiesArr : ["Wi-Fi", "Water Heater"],
+          distance: Number(newListing.distance) || 0.5,
+          images: [newListing.image || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=500&q=80'],
+          roommateProfile: {
+            needed: newListing.roommateNeeded,
+            details: newListing.roommateDetails
+          }
+        };
+
+        const updated = [listing, ...accommodations];
+        setAccommodations(updated);
+        localStorage.setItem("zest_accommodations", JSON.stringify(updated));
+        setShowForm(false);
+        setNewListing({ title: '', description: '', type: 'Hostel Room', rent: '', location: '', occupancy: 'Single', genderPreference: 'Any', amenities: '', distance: '', image: '', roommateNeeded: false, roommateDetails: '' });
+      };
+
+      const toggleWishlist = (listingId) => {
+        const wishlist = currentUser.wishlist || [];
+        const index = wishlist.indexOf(listingId);
+        
+        let updatedWishlist = [...wishlist];
+        if (index > -1) {
+          updatedWishlist.splice(index, 1);
+        } else {
+          updatedWishlist.push(listingId);
+        }
+
+        updateStoredUser({
+          ...currentUser,
+          wishlist: updatedWishlist
+        });
+      };
+
+      const deleteListing = (id) => {
+        const updated = accommodations.filter(a => a._id !== id);
+        setAccommodations(updated);
+        localStorage.setItem("zest_accommodations", JSON.stringify(updated));
+        setSelectedList(null);
+      };
+
+      const filteredListings = accommodations.filter(item => {
+        const matchesType = !filters.type || item.type === filters.type;
+        const matchesRent = !filters.maxRent || item.rent <= Number(filters.maxRent);
+        const matchesRoommate = !filters.roommateNeeded || (item.roommateProfile && item.roommateProfile.needed);
+        const matchesSearch = !filters.search || item.title.toLowerCase().includes(filters.search.toLowerCase()) || item.location.toLowerCase().includes(filters.search.toLowerCase());
+        
+        return matchesType && matchesRent && matchesRoommate && matchesSearch;
+      });
+
+      return (
+        <div className="space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Hostel & Roommate Finder</h2>
+              <p className="text-slate-500 text-sm">Airbnb-inspired accommodation listings for college students.</p>
+            </div>
+            <button 
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors shadow-md"
+            >
+              <Icon name="plus" className="h-4 w-4" /> Post Accommodation
+            </button>
+          </div>
+
+          {/* Filters Bar */}
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="relative flex-1 min-w-[200px]">
+              <Icon name="search" className="absolute top-3 left-3 h-4 w-4 text-slate-400" />
+              <input 
+                type="text"
+                placeholder="Search by address or amenities..."
+                value={filters.search}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm dark:border-slate-800 dark:bg-slate-900 focus:border-emerald-500 outline-none"
+              />
+            </div>
+            <select 
+              value={filters.type}
+              onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+              className="rounded-lg border border-slate-200 bg-white p-2.5 text-sm dark:border-slate-800 dark:bg-slate-900 outline-none"
+            >
+              <option value="">All Types</option>
+              <option value="Hostel Room">Hostel Room</option>
+              <option value="Apartment">Apartment</option>
+              <option value="PG">PG</option>
+              <option value="Flat">Flat</option>
+            </select>
+            <input 
+              type="number"
+              placeholder="Max Rent (₹)"
+              value={filters.maxRent}
+              onChange={(e) => setFilters({ ...filters, maxRent: e.target.value })}
+              className="rounded-lg border border-slate-200 bg-white p-2 text-sm dark:border-slate-800 dark:bg-slate-900 outline-none w-36"
+            />
+            <label className="flex items-center gap-2 text-sm select-none cursor-pointer">
+              <input 
+                type="checkbox"
+                checked={filters.roommateNeeded}
+                onChange={(e) => setFilters({ ...filters, roommateNeeded: e.target.checked })}
+                className="rounded border-slate-300 text-emerald-500 focus:ring-emerald-500 h-4 w-4"
+              />
+              Roommate Needed
+            </label>
+          </div>
+
+          {/* Listings Grid */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredListings.map(l => {
+              const isWished = currentUser.wishlist?.includes(l._id);
+              return (
+                <div 
+                  key={l._id}
+                  onClick={() => setSelectedList(l)}
+                  className="group cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-slate-800 dark:bg-slate-900"
+                >
+                  <div className="h-48 bg-slate-100 overflow-hidden relative dark:bg-slate-800">
+                    <img 
+                      src={l.images[0]} 
+                      alt={l.title} 
+                      className="h-full w-full object-cover group-hover:scale-102 transition-transform duration-300"
+                    />
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); toggleWishlist(l._id); }}
+                      className={`absolute top-3 right-3 rounded-full p-2 transition-colors ${isWished ? 'bg-red-50 text-red-500 dark:bg-red-950/40' : 'bg-white/80 text-slate-600 dark:bg-slate-900/80 hover:text-red-500'}`}
+                    >
+                      <Icon name="heart" className="h-4.5 w-4.5 fill-current" />
+                    </button>
+                  </div>
+                  <div className="p-5 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-500">{l.type} • {l.occupancy}</span>
+                      <span className="font-extrabold text-base text-emerald-500">₹{l.rent}/mo</span>
+                    </div>
+                    <h3 className="font-bold text-sm text-slate-850 dark:text-white line-clamp-1 group-hover:text-emerald-500 transition-colors">{l.title}</h3>
+                    <p className="flex items-center text-xs text-slate-400 gap-1"><Icon name="map-pin" className="h-3.5 w-3.5" /> {l.location} ({l.distance} km from VIT)</p>
+                    {l.roommateProfile?.needed && (
+                      <div className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-0.5 text-[10px] font-semibold text-orange-600 dark:bg-orange-950/20 dark:text-orange-400">
+                        Roommate Match Needed
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Add Listing Modal */}
+          {showForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 overflow-y-auto max-h-[90vh]">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-lg">Post Accommodation</h3>
+                  <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-650"><Icon name="x" className="h-5 w-5" /></button>
+                </div>
+                <form onSubmit={handleCreate} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Listing Title</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. Furnished Flat Near Campus"
+                      value={newListing.title}
+                      onChange={(e) => setNewListing({ ...newListing, title: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Property Type</label>
+                      <select 
+                        value={newListing.type}
+                        onChange={(e) => setNewListing({ ...newListing, type: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                      >
+                        <option value="Hostel Room">Hostel Room</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="PG">PG</option>
+                        <option value="Flat">Flat</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Monthly Rent (₹)</label>
+                      <input 
+                        type="number" required
+                        placeholder="Rent"
+                        value={newListing.rent}
+                        onChange={(e) => setNewListing({ ...newListing, rent: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Occupancy</label>
+                      <select 
+                        value={newListing.occupancy}
+                        onChange={(e) => setNewListing({ ...newListing, occupancy: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                      >
+                        <option value="Single">Single</option>
+                        <option value="Double">Double</option>
+                        <option value="Shared">Shared</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Distance (km from VIT)</label>
+                      <input 
+                        type="number" step="0.1" required
+                        placeholder="e.g. 0.8"
+                        value={newListing.distance}
+                        onChange={(e) => setNewListing({ ...newListing, distance: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Gender Preference</label>
+                      <select 
+                        value={newListing.genderPreference}
+                        onChange={(e) => setNewListing({ ...newListing, genderPreference: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                      >
+                        <option value="Any">Any</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Amenities (comma-separated)</label>
+                      <input 
+                        type="text"
+                        placeholder="Wi-Fi, AC, Laundry"
+                        value={newListing.amenities}
+                        onChange={(e) => setNewListing({ ...newListing, amenities: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Roommate details toggle */}
+                  <div className="border border-slate-200 rounded-xl p-4 dark:border-slate-800 space-y-2 bg-slate-50 dark:bg-slate-950/20">
+                    <label className="flex items-center gap-2 text-sm font-semibold select-none cursor-pointer">
+                      <input 
+                        type="checkbox"
+                        checked={newListing.roommateNeeded}
+                        onChange={(e) => setNewListing({ ...newListing, roommateNeeded: e.target.checked })}
+                        className="rounded border-slate-350 text-emerald-500 focus:ring-emerald-500 h-4 w-4"
+                      />
+                      Looking for Roommate compatibility matching
+                    </label>
+                    {newListing.roommateNeeded && (
+                      <textarea 
+                        rows="2"
+                        placeholder="Describe roommate preferences (studying timings, hygiene)..."
+                        value={newListing.roommateDetails}
+                        onChange={(e) => setNewListing({ ...newListing, roommateDetails: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-xs dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none mt-2"
+                      />
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Image URL (Optional)</label>
+                    <input 
+                      type="text"
+                      placeholder="https://example.com/hostel.jpg"
+                      value={newListing.image}
+                      onChange={(e) => setNewListing({ ...newListing, image: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Location Address</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. Lane 2, Kondhwa Road"
+                      value={newListing.location}
+                      onChange={(e) => setNewListing({ ...newListing, location: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors"
+                  >
+                    Post Accommodation
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Detailed Accommodation modal */}
+          {selectedList && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+                <div className="h-56 bg-slate-100 relative dark:bg-slate-800">
+                  <img 
+                    src={selectedList.images[0]} 
+                    alt={selectedList.title} 
+                    className="h-full w-full object-cover"
+                  />
+                  <button 
+                    onClick={() => setSelectedList(null)} 
+                    className="absolute top-4 right-4 bg-black/40 text-white rounded-full p-1.5 hover:bg-black/60 transition-colors"
+                  >
+                    <Icon name="x" className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-xs font-semibold text-emerald-500 uppercase">{selectedList.type}</span>
+                      <h3 className="text-xl font-bold mt-1">{selectedList.title}</h3>
+                    </div>
+                    {selectedList.owner === currentUser.id && (
+                      <button 
+                        onClick={() => deleteListing(selectedList._id)} 
+                        className="text-red-500 hover:text-red-650 p-1.5 rounded-lg border border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/20"
+                      >
+                        <Icon name="trash" className="h-4.5 w-4.5" />
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-2xl font-extrabold text-emerald-500">₹{selectedList.rent}/month</p>
+
+                  <div className="flex flex-wrap gap-3 items-center text-xs text-slate-500">
+                    <span className="bg-slate-100 px-2 py-1 rounded dark:bg-slate-800">Distance: {selectedList.distance} km</span>
+                    <span className="bg-slate-100 px-2 py-1 rounded dark:bg-slate-800">Gender: {selectedList.genderPreference}</span>
+                    <span className="bg-slate-100 px-2 py-1 rounded dark:bg-slate-800">Occupancy: {selectedList.occupancy}</span>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs uppercase font-semibold text-slate-400">Amenities</h4>
+                    <div className="flex flex-wrap gap-2 mt-1.5">
+                      {selectedList.amenities.map((am, i) => (
+                        <span key={i} className="text-xs border border-slate-200 rounded-lg px-2.5 py-1 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">{am}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {selectedList.roommateProfile?.needed && (
+                    <div className="bg-orange-50 border border-orange-250 rounded-xl p-4 dark:bg-orange-950/10 dark:border-orange-900/40">
+                      <h4 className="text-xs uppercase font-semibold text-orange-700 dark:text-orange-400">Roommate Matching Profile</h4>
+                      <p className="text-xs text-slate-650 dark:text-slate-350 mt-1 leading-relaxed">{selectedList.roommateProfile.details}</p>
+                    </div>
+                  )}
+
+                  <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+                    <span className="block text-xs text-slate-400">Listed By Student</span>
+                    <span className="font-semibold text-sm">{selectedList.ownerName}</span>
+                    <p className="text-xs text-slate-500 mt-1">Contact: {selectedList.ownerContact}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ========================================================
+    // E. PYQS & NOTES 플랫폼 (LEADERBOARD SUPPORT)
+    // ========================================================
+    function Resources({ resources, setResources, currentUser, updateStoredUser, users }) {
+      const [showUpload, setShowUpload] = useState(false);
+      const [newRes, setNewRes] = useState({ title: '', description: '', department: 'Computer', year: '1st Year', semester: 'Semester 1', subject: '', filePath: '' });
+      const [filters, setFilters] = useState({ department: '', semester: '', subject: '', search: '' });
+      const [selectedRes, setSelectedRes] = useState(null);
+      const [ratingVal, setRatingVal] = useState(5);
+      const [reviewText, setReviewText] = useState('');
+
+      const handleCreate = (e) => {
+        e.preventDefault();
+        if (!newRes.title || !newRes.subject) return;
+
+        const listing = {
+          _id: 'r' + (resources.length + 1),
+          contributor: currentUser.id,
+          contributorName: currentUser.name,
+          title: newRes.title,
+          description: newRes.description,
+          department: newRes.department,
+          year: newRes.year,
+          semester: newRes.semester,
+          subject: newRes.subject,
+          filePath: newRes.filePath || 'notes_syllabus_preview.pdf',
+          downloads: 0,
+          ratings: [],
+          avgRating: 0.0,
+          reviews: []
+        };
+
+        const updated = [listing, ...resources];
+        setResources(updated);
+        localStorage.setItem("zest_resources", JSON.stringify(updated));
+
+        // Increment contributions count
+        const currentCount = currentUser.contributions || 0;
+        updateStoredUser({
+          ...currentUser,
+          contributions: currentCount + 1
+        });
+
+        setShowUpload(false);
+        setNewRes({ title: '', description: '', department: 'Computer', year: '1st Year', semester: 'Semester 1', subject: '', filePath: '' });
+      };
+
+      const handleDownload = (id, filePath) => {
+        const updated = resources.map(res => {
+          if (res._id === id) {
+            return { ...res, downloads: (res.downloads || 0) + 1 };
+          }
+          return res;
+        });
+        setResources(updated);
+        localStorage.setItem("zest_resources", JSON.stringify(updated));
+        
+        // Mock download trigger
+        alert(`Downloading syllabus resource: ${filePath}`);
+        if (selectedRes?._id === id) {
+          setSelectedRes(updated.find(r => r._id === id));
+        }
+      };
+
+      const handleReview = (e) => {
+        e.preventDefault();
+        if (!reviewText) return;
+
+        const updated = resources.map(res => {
+          if (res._id === selectedRes._id) {
+            const ratings = (res.ratings || []).filter(r => r.userId !== currentUser.id);
+            ratings.push({ userId: currentUser.id, rating: Number(ratingVal) });
+            const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+
+            const reviews = res.reviews || [];
+            reviews.push({
+              userId: currentUser.id,
+              userName: currentUser.name,
+              text: reviewText,
+              date: new Date().toISOString()
+            });
+
+            return {
+              ...res,
+              ratings,
+              avgRating: Number(avg.toFixed(1)),
+              reviews
+            };
+          }
+          return res;
+        });
+
+        setResources(updated);
+        localStorage.setItem("zest_resources", JSON.stringify(updated));
+        setSelectedRes(updated.find(r => r._id === selectedRes._id));
+        setReviewText('');
+      };
+
+      const deleteResource = (id) => {
+        const updated = resources.filter(r => r._id !== id);
+        setResources(updated);
+        localStorage.setItem("zest_resources", JSON.stringify(updated));
+        setSelectedRes(null);
+      };
+
+      const filteredResources = resources.filter(res => {
+        const matchesBranch = !filters.department || res.department === filters.department;
+        const matchesSem = !filters.semester || res.semester === filters.semester;
+        const matchesSearch = !filters.search || res.title.toLowerCase().includes(filters.search.toLowerCase()) || res.subject.toLowerCase().includes(filters.search.toLowerCase());
+        return matchesBranch && matchesSem && matchesSearch;
+      });
+
+      // Construct leaderboard based on all registered users' contributions
+      const leaderboard = [...users]
+        .sort((a, b) => (b.contributions || 0) - (a.contributions || 0))
+        .slice(0, 5);
+
+      return (
+        <div className="grid gap-8 lg:grid-cols-12">
+          {/* Main platform resources */}
+          <div className="lg:col-span-8 space-y-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">PYQs & Notes Repository</h2>
+                <p className="text-slate-500 text-sm">Download syllabus notes, lab sheets, and exam papers.</p>
+              </div>
+              <button 
+                onClick={() => setShowUpload(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors shadow-md self-start"
+              >
+                <Icon name="plus" className="h-4 w-4" /> Upload Note
+              </button>
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="relative flex-1 min-w-[200px]">
+                <Icon name="search" className="absolute top-3 left-3 h-4 w-4 text-slate-400" />
+                <input 
+                  type="text"
+                  placeholder="Search subjects, topics..."
+                  value={filters.search}
+                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm dark:border-slate-800 dark:bg-slate-900 focus:border-emerald-500 outline-none"
+                />
+              </div>
+              <select 
+                value={filters.department}
+                onChange={(e) => setFilters({ ...filters, department: e.target.value })}
+                className="rounded-lg border border-slate-200 bg-white p-2.5 text-sm dark:border-slate-800 dark:bg-slate-900 outline-none"
+              >
+                <option value="">All Branches</option>
+                <option value="Computer">Computer</option>
+                <option value="IT">IT</option>
+                <option value="Mechanical">Mechanical</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Chemical">Chemical</option>
+              </select>
+              <select 
+                value={filters.semester}
+                onChange={(e) => setFilters({ ...filters, semester: e.target.value })}
+                className="rounded-lg border border-slate-200 bg-white p-2.5 text-sm dark:border-slate-800 dark:bg-slate-900 outline-none"
+              >
+                <option value="">All Semesters</option>
+                <option value="Semester 1">Semester 1</option>
+                <option value="Semester 2">Semester 2</option>
+                <option value="Semester 3">Semester 3</option>
+                <option value="Semester 4">Semester 4</option>
+                <option value="Semester 5">Semester 5</option>
+                <option value="Semester 6">Semester 6</option>
+                <option value="Semester 7">Semester 7</option>
+                <option value="Semester 8">Semester 8</option>
+              </select>
+            </div>
+
+            {/* List */}
+            <div className="space-y-4">
+              {filteredResources.map(r => (
+                <div 
+                  key={r._id}
+                  onClick={() => setSelectedRes(r)}
+                  className="flex items-center justify-between border border-slate-200 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:border-slate-800 dark:bg-slate-900"
+                >
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-emerald-500 uppercase">{r.department} Dept • {r.semester}</span>
+                    <h3 className="font-bold text-slate-850 dark:text-white text-sm">{r.title}</h3>
+                    <p className="text-xs text-slate-400">{r.subject} • {r.downloads || 0} downloads</p>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center text-yellow-500 gap-1 text-xs">
+                      <Icon name="star" className="h-4 w-4 fill-current" /> {r.avgRating > 0 ? r.avgRating : 'Unrated'}
+                    </div>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleDownload(r._id, r.filePath); }}
+                      className="rounded-lg bg-emerald-50 p-2 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 transition-colors"
+                      title="Download PDF"
+                    >
+                      <Icon name="download" className="h-4.5 w-4.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Contributor Leaderboard */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-1.5"><Icon name="award" className="h-5 w-5 text-yellow-500" /> Top Contributors</h3>
+              <div className="space-y-4">
+                {leaderboard.map((u, i) => (
+                  <div key={u.id} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold text-slate-400 w-4">#{i+1}</span>
+                      <div className="h-8 w-8 rounded-full border border-slate-200 overflow-hidden shrink-0">
+                        <img src={u.profilePic || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80"} className="h-full w-full object-cover" />
+                      </div>
+                      <div>
+                        <span className="font-semibold block">{u.name}</span>
+                        <span className="text-[10px] text-slate-400">{u.branch}</span>
+                      </div>
+                    </div>
+                    <span className="font-bold text-emerald-500">{u.contributions || 0} uploads</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Upload Modal */}
+          {showUpload && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-lg">Upload Note / PYQ</h3>
+                  <button onClick={() => setShowUpload(false)} className="text-slate-400 hover:text-slate-650"><Icon name="x" className="h-5 w-5" /></button>
+                </div>
+                <form onSubmit={handleCreate} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Document Title</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. Unit 3 Trees & Graphs Handwritten Notes"
+                      value={newRes.title}
+                      onChange={(e) => setNewRes({ ...newRes, title: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Department</label>
+                      <select 
+                        value={newRes.department}
+                        onChange={(e) => setNewRes({ ...newRes, department: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                      >
+                        <option value="Computer">Computer</option>
+                        <option value="IT">IT</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Chemical">Chemical</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Semester</label>
+                      <select 
+                        value={newRes.semester}
+                        onChange={(e) => setNewRes({ ...newRes, semester: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                      >
+                        <option value="Semester 1">Semester 1</option>
+                        <option value="Semester 2">Semester 2</option>
+                        <option value="Semester 3">Semester 3</option>
+                        <option value="Semester 4">Semester 4</option>
+                        <option value="Semester 5">Semester 5</option>
+                        <option value="Semester 6">Semester 6</option>
+                        <option value="Semester 7">Semester 7</option>
+                        <option value="Semester 8">Semester 8</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Subject Name</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. Data Structures & Algorithms"
+                      value={newRes.subject}
+                      onChange={(e) => setNewRes({ ...newRes, subject: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">PDF File Name</label>
+                    <input 
+                      type="text"
+                      placeholder="e.g. dsa_notes_u3.pdf"
+                      value={newRes.filePath}
+                      onChange={(e) => setNewRes({ ...newRes, filePath: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Description</label>
+                    <textarea 
+                      rows="2"
+                      placeholder="Briefly describe notes contents, chapters covered..."
+                      value={newRes.description}
+                      onChange={(e) => setNewRes({ ...newRes, description: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors"
+                  >
+                    Post Resource
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Details Modal */}
+          {selectedRes && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 max-h-[85vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <div>
+                    <span className="text-[10px] font-semibold text-emerald-500 uppercase">{selectedRes.department} Department</span>
+                    <h3 className="font-bold text-lg">{selectedRes.title}</h3>
+                  </div>
+                  <div className="flex gap-2">
+                    {selectedRes.contributor === currentUser.id && (
+                      <button 
+                        onClick={() => deleteResource(selectedRes._id)}
+                        className="text-red-500 hover:text-red-650 p-1 rounded border border-red-250 hover:bg-red-50 dark:border-red-950 dark:hover:bg-red-950/20"
+                      >
+                        <Icon name="trash" className="h-4.5 w-4.5" />
+                      </button>
+                    )}
+                    <button onClick={() => setSelectedRes(null)} className="text-slate-400 hover:text-slate-650"><Icon name="x" className="h-5 w-5" /></button>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center text-xs bg-slate-50 p-3 rounded-xl dark:bg-slate-800/40">
+                    <div>
+                      <span className="block text-slate-400">Subject</span>
+                      <span className="font-bold">{selectedRes.subject}</span>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400">Contributor</span>
+                      <span className="font-bold">{selectedRes.contributorName}</span>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400">Downloads</span>
+                      <span className="font-bold text-emerald-500">{selectedRes.downloads || 0}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs uppercase font-semibold text-slate-400">Description</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-350 leading-relaxed mt-1">{selectedRes.description || 'No description provided.'}</p>
+                  </div>
+
+                  {/* Add Rating form */}
+                  <form onSubmit={handleReview} className="border border-slate-100 rounded-xl p-4 dark:border-slate-800 space-y-3 bg-slate-50 dark:bg-slate-850/25">
+                    <span className="block text-xs uppercase font-bold text-slate-500">Rate this study resource</span>
+                    <div className="flex gap-2">
+                      {[1,2,3,4,5].map(st => (
+                        <button 
+                          type="button" key={st} 
+                          onClick={() => setRatingVal(st)}
+                          className="text-yellow-500 focus:outline-none"
+                        >
+                          <Icon name="star" className={`h-5 w-5 ${ratingVal >= st ? 'fill-current' : 'fill-none stroke-current'}`} />
+                        </button>
+                      ))}
+                    </div>
+                    <input 
+                      type="text" required
+                      placeholder="Add validation comment (e.g. helped in midsems)..."
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-xs dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                    <button type="submit" className="rounded bg-emerald-500 px-3.5 py-2 text-xs text-white font-semibold shadow hover:bg-emerald-600 transition-colors">Submit Review</button>
+                  </form>
+
+                  {/* Reviews lists */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs uppercase font-semibold text-slate-405">Student Reviews ({selectedRes.reviews?.length || 0})</h4>
+                    <div className="space-y-2.5 max-h-48 overflow-y-auto">
+                      {selectedRes.reviews?.map((rv, idx) => (
+                        <div key={idx} className="border-b border-slate-100 pb-2 text-xs dark:border-slate-850">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="font-semibold">{rv.userName}</span>
+                            <span className="text-[10px] text-slate-400">{new Date(rv.date).toLocaleDateString()}</span>
+                          </div>
+                          <p className="text-slate-550 dark:text-slate-400">{rv.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => handleDownload(selectedRes._id, selectedRes.filePath)}
+                    className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Icon name="download" className="h-5 w-5" /> Download Syllabus PDF Resource
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ========================================================
+    // F. LOST & FOUND PORTAL
+    // ========================================================
+    function LostFound({ lostfound, setLostfound, currentUser }) {
+      const [showModal, setShowModal] = useState(false);
+      const [selectedItem, setSelectedItem] = useState(null);
+      const [newItem, setNewItem] = useState({ title: '', description: '', type: 'Lost', location: '', date: '', image: '' });
+      const [filters, setFilters] = useState({ type: '', status: '', search: '' });
+      const [claimMessage, setClaimMessage] = useState('');
+
+      const handleCreate = (e) => {
+        e.preventDefault();
+        if (!newItem.title || !newItem.location) return;
+
+        const report = {
+          _id: 'lf' + (lostfound.length + 1),
+          reporter: currentUser.id,
+          reporterName: currentUser.name,
+          reporterContact: currentUser.contact || currentUser.email,
+          title: newItem.title,
+          description: newItem.description,
+          image: newItem.image || 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=400&q=80',
+          type: newItem.type,
+          location: newItem.location,
+          date: newItem.date || new Date().toISOString().split('T')[0],
+          status: newItem.type === 'Lost' ? 'Lost' : 'Found',
+          claimRequests: []
+        };
+
+        const updated = [report, ...lostfound];
+        setLostfound(updated);
+        localStorage.setItem("zest_lostfound", JSON.stringify(updated));
+        setShowModal(false);
+        setNewItem({ title: '', description: '', type: 'Lost', location: '', date: '', image: '' });
+      };
+
+      const submitClaim = (e) => {
+        e.preventDefault();
+        if (!claimMessage) return;
+
+        const updated = lostfound.map(item => {
+          if (item._id === selectedItem._id) {
+            const claims = item.claimRequests || [];
+            claims.push({
+              userId: currentUser.id,
+              userName: currentUser.name,
+              contact: currentUser.contact || currentUser.email,
+              message: claimMessage,
+              isApproved: false
+            });
+            return {
+              ...item,
+              claimRequests: claims,
+              status: item.status === 'Lost' || item.status === 'Found' ? 'Claimed' : item.status
+            };
+          }
+          return item;
+        });
+
+        setLostfound(updated);
+        localStorage.setItem("zest_lostfound", JSON.stringify(updated));
+        setSelectedItem(updated.find(i => i._id === selectedItem._id));
+        setClaimMessage('');
+        alert("Claim verification request sent to the original reporter.");
+      };
+
+      const handleClaimApproval = (itemId, claimIdx, action) => {
+        const updated = lostfound.map(item => {
+          if (item._id === itemId) {
+            const claims = [...item.claimRequests];
+            let status = item.status;
+
+            if (action === 'approve') {
+              claims[claimIdx].isApproved = true;
+              status = 'Verified';
+            } else if (action === 'reject') {
+              claims.splice(claimIdx, 1);
+              status = claims.length > 0 ? 'Claimed' : (item.type === 'Lost' ? 'Lost' : 'Found');
+            }
+
+            return {
+              ...item,
+              claimRequests: claims,
+              status
+            };
+          }
+          return item;
+        });
+
+        setLostfound(updated);
+        localStorage.setItem("zest_lostfound", JSON.stringify(updated));
+        setSelectedItem(updated.find(i => i._id === itemId));
+      };
+
+      const updateStatus = (itemId, newStatus) => {
+        const updated = lostfound.map(item => {
+          if (item._id === itemId) {
+            return { ...item, status: newStatus };
+          }
+          return item;
+        });
+        setLostfound(updated);
+        localStorage.setItem("zest_lostfound", JSON.stringify(updated));
+        setSelectedItem(updated.find(i => i._id === itemId));
+      };
+
+      const deleteReport = (id) => {
+        const updated = lostfound.filter(item => item._id !== id);
+        setLostfound(updated);
+        localStorage.setItem("zest_lostfound", JSON.stringify(updated));
+        setSelectedItem(null);
+      };
+
+      const filteredItems = lostfound.filter(item => {
+        const matchesType = !filters.type || item.type === filters.type;
+        const matchesStatus = !filters.status || item.status === filters.status;
+        const matchesSearch = !filters.search || item.title.toLowerCase().includes(filters.search.toLowerCase()) || item.location.toLowerCase().includes(filters.search.toLowerCase());
+        return matchesType && matchesStatus && matchesSearch;
+      });
+
+      return (
+        <div className="space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Lost & Found Portal</h2>
+              <p className="text-slate-500 text-sm">Report lost products, keys, wallets, or trace ownership claims.</p>
+            </div>
+            <button 
+              onClick={() => setShowModal(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors shadow-md self-start"
+            >
+              <Icon name="plus" className="h-4 w-4" /> Report Lost/Found
+            </button>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="relative flex-1 min-w-[200px]">
+              <Icon name="search" className="absolute top-3 left-3 h-4 w-4 text-slate-400" />
+              <input 
+                type="text"
+                placeholder="Search reported items or locations..."
+                value={filters.search}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm dark:border-slate-800 dark:bg-slate-900 focus:border-emerald-500 outline-none"
+              />
+            </div>
+            <select 
+              value={filters.type}
+              onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+              className="rounded-lg border border-slate-200 bg-white p-2.5 text-sm dark:border-slate-800 dark:bg-slate-900 outline-none"
+            >
+              <option value="">All Types</option>
+              <option value="Lost">Lost</option>
+              <option value="Found">Found</option>
+            </select>
+            <select 
+              value={filters.status}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+              className="rounded-lg border border-slate-200 bg-white p-2.5 text-sm dark:border-slate-800 dark:bg-slate-900 outline-none"
+            >
+              <option value="">All Statuses</option>
+              <option value="Lost">Lost</option>
+              <option value="Found">Found</option>
+              <option value="Claimed">Claimed</option>
+              <option value="Verified">Verified</option>
+              <option value="Returned">Returned</option>
+            </select>
+          </div>
+
+          {/* List items Grid */}
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {filteredItems.map(item => (
+              <div 
+                key={item._id}
+                onClick={() => setSelectedItem(item)}
+                className="group cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-slate-800 dark:bg-slate-900"
+              >
+                <div className="h-44 bg-slate-100 overflow-hidden relative dark:bg-slate-850">
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="h-full w-full object-cover group-hover:scale-102 transition-transform duration-300"
+                  />
+                  <span className={`absolute top-3 left-3 rounded px-2 py-0.5 text-[10px] font-bold text-white uppercase ${item.type === 'Lost' ? 'bg-red-500' : 'bg-blue-500'}`}>{item.type}</span>
+                </div>
+                <div className="p-4 space-y-2">
+                  <h3 className="font-bold text-sm text-slate-850 dark:text-white line-clamp-1 group-hover:text-emerald-500 transition-colors">{item.title}</h3>
+                  <p className="flex items-center text-[10px] text-slate-400 gap-1"><Icon name="map-pin" className="h-3.5 w-3.5" /> {item.location} • {item.date}</p>
+                  <div className="flex items-center justify-between border-t border-slate-100 pt-2.5 dark:border-slate-800 mt-2">
+                    <span className="text-[10px] text-slate-400">Reporter: {item.reporterName}</span>
+                    <span className="text-[10px] font-semibold bg-slate-100 px-2 py-0.5 rounded text-slate-655 dark:bg-slate-800 dark:text-slate-350">{item.status}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Add report Modal */}
+          {showModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-lg">Report Lost/Found Item</h3>
+                  <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-650"><Icon name="x" className="h-5 w-5" /></button>
+                </div>
+                <form onSubmit={handleCreate} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Item Title</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. Noise Smartwatch Black"
+                      value={newItem.title}
+                      onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Type</label>
+                      <select 
+                        value={newItem.type}
+                        onChange={(e) => setNewItem({ ...newItem, type: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                      >
+                        <option value="Lost">Lost</option>
+                        <option value="Found">Found</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Date of Incident</label>
+                      <input 
+                        type="date" required
+                        value={newItem.date}
+                        onChange={(e) => setNewItem({ ...newItem, date: e.target.value })}
+                        className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Location</label>
+                    <input 
+                      type="text" required
+                      placeholder="e.g. Library / Canteen block A"
+                      value={newItem.location}
+                      onChange={(e) => setNewItem({ ...newItem, location: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Image URL (Optional)</label>
+                    <input 
+                      type="text"
+                      placeholder="https://example.com/item.jpg"
+                      value={newItem.image}
+                      onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Description</label>
+                    <textarea 
+                      rows="2"
+                      placeholder="Describe unique identification characteristics..."
+                      value={newItem.description}
+                      onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors"
+                  >
+                    Post Report
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Details Modal */}
+          {selectedItem && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+              <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+                <div className="h-56 bg-slate-100 relative dark:bg-slate-800">
+                  <img 
+                    src={selectedItem.image} 
+                    alt={selectedItem.title} 
+                    className="h-full w-full object-cover"
+                  />
+                  <button 
+                    onClick={() => setSelectedItem(null)} 
+                    className="absolute top-4 right-4 bg-black/40 text-white rounded-full p-1.5 hover:bg-black/60 transition-colors"
+                  >
+                    <Icon name="x" className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-xs font-semibold text-emerald-500 uppercase">{selectedItem.type} Item</span>
+                      <h3 className="text-xl font-bold mt-1">{selectedItem.title}</h3>
+                    </div>
+                    {selectedItem.reporter === currentUser.id && (
+                      <button 
+                        onClick={() => deleteReport(selectedItem._id)}
+                        className="text-red-500 hover:text-red-650 p-1.5 rounded-lg border border-red-200 hover:bg-red-50 dark:border-red-950 dark:hover:bg-red-950/20"
+                      >
+                        <Icon name="trash" className="h-4.5 w-4.5" />
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 flex items-center gap-1"><Icon name="map-pin" className="h-4 w-4" /> {selectedItem.location} • Incident Date: {selectedItem.date}</p>
+
+                  <div>
+                    <h4 className="text-xs uppercase font-semibold text-slate-400">Description</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-350 mt-1 leading-relaxed">{selectedItem.description || 'No description provided.'}</p>
+                  </div>
+
+                  {selectedItem.reporter === currentUser.id ? (
+                    <div className="space-y-3 border-t border-slate-100 pt-4 dark:border-slate-800">
+                      <h4 className="text-xs uppercase font-semibold text-slate-400">Claims Submitted ({selectedItem.claimRequests?.length || 0})</h4>
+                      <div className="space-y-3">
+                        {selectedItem.claimRequests?.map((claim, idx) => (
+                          <div key={idx} className="border border-slate-200 rounded-xl p-3 text-xs dark:border-slate-800 space-y-2 bg-slate-50 dark:bg-slate-900/50">
+                            <div className="flex justify-between items-center">
+                              <span className="font-semibold">{claim.userName} ({claim.contact})</span>
+                              {claim.isApproved ? (
+                                <span className="font-bold text-emerald-500">Approved & Verified</span>
+                              ) : (
+                                <div className="flex gap-2">
+                                  <button onClick={() => handleClaimApproval(selectedItem._id, idx, 'approve')} className="text-emerald-500 hover:underline">Approve</button>
+                                  <button onClick={() => handleClaimApproval(selectedItem._id, idx, 'reject')} className="text-red-500 hover:underline">Reject</button>
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-slate-500"><b>Details:</b> {claim.message}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {selectedItem.status !== 'Returned' && (
+                        <button 
+                          onClick={() => updateStatus(selectedItem._id, 'Returned')}
+                          className="w-full rounded-lg bg-emerald-500 py-2.5 text-xs text-white hover:bg-emerald-600 transition-colors font-semibold"
+                        >
+                          Mark as Returned to Owner
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+                      <form onSubmit={submitClaim} className="space-y-3">
+                        <span className="block text-xs uppercase font-bold text-slate-500">Claim ownership of this item</span>
+                        <p className="text-[10px] text-slate-400">Describe unique identification marks (color straps, content details) so the reporter can verify you.</p>
+                        <input 
+                          type="text" required
+                          placeholder="e.g. My wallet has my driving license and two metro cards..."
+                          value={claimMessage}
+                          onChange={(e) => setClaimMessage(e.target.value)}
+                          className="w-full rounded-lg border border-slate-200 p-2.5 text-xs dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                        />
+                        <button type="submit" className="w-full rounded bg-emerald-500 py-2.5 text-xs text-white font-semibold shadow hover:bg-emerald-600 transition-colors">Submit Claim Verification Request</button>
+                      </form>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ========================================================
+    // G. STUDENT PROFILE COMPONENT
+    // ========================================================
+    function Profile({ currentUser, updateStoredUser }) {
+      const [formData, setFormData] = useState({ name: '', branch: '', year: '', status: 'Day Scholar', contact: '', profilePic: '' });
+      const [editSuccess, setEditSuccess] = useState(false);
+
+      useEffect(() => {
+        if (currentUser) {
+          setFormData({
+            name: currentUser.name || '',
+            branch: currentUser.branch || '',
+            year: currentUser.year || '',
+            status: currentUser.status || 'Day Scholar',
+            contact: currentUser.contact || '',
+            profilePic: currentUser.profilePic || ''
+          });
+        }
+      }, [currentUser]);
+
+      const handleUpdate = (e) => {
+        e.preventDefault();
+        
+        updateStoredUser({
+          ...currentUser,
+          name: formData.name,
+          branch: formData.branch,
+          year: formData.year,
+          status: formData.status,
+          contact: formData.contact,
+          profilePic: formData.profilePic
+        });
+
+        setEditSuccess(true);
+        setTimeout(() => setEditSuccess(false), 3000);
+      };
+
+      return (
+        <div className="w-full max-w-xl mx-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-6">
+          <div className="flex items-center gap-4 border-b border-slate-100 pb-4 dark:border-slate-800">
+            <div className="h-16 w-16 overflow-hidden rounded-full border border-emerald-500 shrink-0">
+              <img src={formData.profilePic || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80"} alt="Profile" className="h-full w-full object-cover" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">{currentUser?.name}</h3>
+              <p className="text-xs text-slate-400">{currentUser?.email} • {currentUser?.branch}</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleUpdate} className="space-y-4">
+            {editSuccess && (
+              <div className="rounded-lg bg-emerald-50 p-3 text-xs text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                Student Profile saved successfully.
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Profile Picture URL</label>
+              <input 
+                type="text"
+                placeholder="https://example.com/student-avatar.jpg"
+                value={formData.profilePic}
+                onChange={(e) => setFormData({ ...formData, profilePic: e.target.value })}
+                className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Full Name</label>
+                <input 
+                  type="text" required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Phone Number</label>
+                <input 
+                  type="text"
+                  placeholder="+91 XXXXX XXXXX"
+                  value={formData.contact}
+                  onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Branch</label>
+                <input 
+                  type="text"
+                  value={formData.branch}
+                  onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 focus:border-emerald-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Year</label>
+                <select 
+                  value={formData.year}
+                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                >
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1 text-slate-500 uppercase">Status</label>
+                <select 
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-800 dark:bg-slate-950 outline-none"
+                >
+                  <option value="Hostel">Hostel Scholar</option>
+                  <option value="Day Scholar">Day Scholar</option>
+                </select>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600 transition-colors"
+            >
+              Update Student Profile
+            </button>
+          </form>
+        </div>
+      );
+    }
+
+    // Render into root
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
