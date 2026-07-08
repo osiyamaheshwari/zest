@@ -15,6 +15,22 @@ A full-stack web app for college students (VIT Pune, `@vit.edu`) to buy/sell ite
 | Dev tooling | nodemon, Vite dev server with `/api` proxy |
 
 ---
+## Screenshots
+
+### Login
+
+![Login](desktop/login.png)
+
+## Home
+![Home](desktop/home.png)
+
+### Lost and Found
+
+![LostandFound](desktop/lost.png)
+
+### Hostel
+
+![Hostel](desktop/hostel.png)
 
 ## Features
 
