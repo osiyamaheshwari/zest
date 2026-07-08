@@ -19,19 +19,19 @@ A full-stack web app for college students (VIT Pune, `@vit.edu`) to buy/sell ite
 
 ### Login
 
-![Login](desktop/login.png)
+![Login](screenshots/login.png)
 
-## Home
-![Home](desktop/home.png)
+### Home
 
-### Lost and Found
+![Home](screenshots/home.png)
 
-![LostandFound](desktop/lost.png)
+### Lost & Found
+
+![Lost and Found](screenshots/lostandfound.png)
 
 ### Hostel
 
-![Hostel](desktop/hostel.png)
-
+![Hostel](screenshots/hostel.png)
 ## Features
 
 - **Auth** — register/login restricted to `@vit.edu` emails, JWT sessions, profile edit.
